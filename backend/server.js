@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -10,9 +11,7 @@ app.get("/", (req,res)=>{
     res.send("Backend running...");
 });
  
-app.listen(5000, ()=>{
-    console.log("Server started on port 5000");
-});
+// Consolidated at bottom, no top-level listen
 
 const users = [
 {email:"test@gmail.com", password:"1234", role:"user"},
@@ -51,18 +50,15 @@ app.use("/api/slots", slotRoutes);
 app.use("/api/projects", projectRoutes);
 
 const mongoose = require("mongoose");
+const MONGO_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/smart_parking";
 
-mongoose.connect("mongodb+srv://guruseelan29aug2005_db_user:29aug2005@cluster0.esshsfh.mongodb.net/?appName=Cluster0")
-    .then(() => console.log("DB connected"))
-    .catch(err => console.log("DB Error:", err));
+mongoose.connect(MONGO_URI)
+  .then(() => console.log("DB connected"))
+  .catch(err => console.log("DB Error:", err));
 
 
 const companyRoutes = require("./routes/companies");
 app.use("/api/company", companyRoutes);
-
-require("dotenv").config();
-
-app.use(express.json());
 
 // Test Route
 app.get("/", (req, res) => {
@@ -70,7 +66,7 @@ app.get("/", (req, res) => {
 });
  
 const PORT = process.env.PORT || 5000;
- 
+
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });
